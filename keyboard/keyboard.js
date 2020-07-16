@@ -140,6 +140,41 @@ const keyboard = {
           });
 
           break;
+
+        case "space":
+          keyElement.classList.add("keyboard__key--extra-wide");
+          keyElement.innerHTML = createIconHTML("space_bar");
+
+          keyElement.addEventListener("click", () => {
+            this.properties.value += " ";
+            this._triggerEvent("oninput");
+          });
+
+          break;
+
+        case "done":
+          keyElement.classList.add(
+            "keyboard__key--wide",
+            "keyboard__key--dark"
+          );
+          keyElement.innerHTML = createIconHTML("check_circle");
+
+          keyElement.addEventListener("click", () => {
+            this.close();
+            this._triggerEvent("onclose");
+          });
+
+          break;
+
+        default:
+          keyElement.textContent = key.toLowerCase();
+          
+          keyElement.addEventListener("click", () => {
+            this.close();
+            this._triggerEvent("onclose");
+          });
+
+          break;
       }
     });
   },
