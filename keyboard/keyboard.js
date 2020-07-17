@@ -19,7 +19,7 @@ const keyboard = {
     this.elements.main = document.createElement("div");
     this.elements.keysContainer = document.createElement("div");
 
-    this.elements.main.classList.add("keyboard", "1keyboard--hidden");
+    this.elements.main.classList.add("keyboard", "keyboard--hidden");
     this.elements.keysContainer.classList.add("keyboard__keys");
     this.elements.keysContainer.appendChild(this._createKeys());
 
@@ -29,6 +29,14 @@ const keyboard = {
 
     this.elements.main.appendChild(this.elements.keysContainers);
     document.body.appendChild(this.elements.main);
+
+    document.querySelectorAll(".use-keyboard-input").forEach((element) => {
+      element.addEventListener("focus", () => {
+        this.open(element.value, (currentValue) => {
+          element.value = currentValue;
+        });
+      });
+    });
   },
 
   _createKeys() {
@@ -193,7 +201,9 @@ const keyboard = {
   },
 
   _triggerEvent(handlerName) {
-    console.log("Event Triggered! Event Name: " + handlerName);
+    if (typeof this.eventHandlers[handlerName] == "function") {
+      this.eventHandlers[handlerName](this.properties.value);
+    }
   },
 
   _toggleCapsLock() {
@@ -208,10 +218,29 @@ const keyboard = {
     }
   },
 
-  open() {},
-  close() {},
+  open(initialValue, oninput, onclose) {
+    this.properties.value = initialValue || "";
+    this.eventHandlers.oninput = oninput;
+    this.eventHandlers.onclose = onclose;
+    this.elements.main.classList.remove("keyboard--hidden");
+  },
+  close() {
+    this.properties.value = "";
+    this.eventHandlers.oninput = oninput;
+    this.eventHandlers.onclose = onclose;
+    this.elements.main.classList.add("keyboard--hidden");
+  },
 };
 
 window.addEventListener("DOMContentLoaded", function () {
   keyboard.init();
+  keyboard.open(
+    "dcode",
+    function (currentValue) {
+      console.log("value changed! here it is: " + currentValue);
+    },
+    function (currentValue) {
+      console.log("keyboard closed! Finishing Value: " + currentValue);
+    }
+  );
 });
