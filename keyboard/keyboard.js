@@ -1,4 +1,4 @@
-const keyboard = {
+const Keyboard = {
   elements: {
     main: null,
     keysContainer: null,
@@ -16,9 +16,11 @@ const keyboard = {
   },
 
   init() {
+    // Create main elements
     this.elements.main = document.createElement("div");
     this.elements.keysContainer = document.createElement("div");
 
+    // Setup main elements
     this.elements.main.classList.add("keyboard", "keyboard--hidden");
     this.elements.keysContainer.classList.add("keyboard__keys");
     this.elements.keysContainer.appendChild(this._createKeys());
@@ -27,9 +29,11 @@ const keyboard = {
       ".keyboard__key"
     );
 
-    this.elements.main.appendChild(this.elements.keysContainers);
+    // Add to DOM
+    this.elements.main.appendChild(this.elements.keysContainer);
     document.body.appendChild(this.elements.main);
 
+    // Automatically use keyboard for elements with .use-keyboard-input
     document.querySelectorAll(".use-keyboard-input").forEach((element) => {
       element.addEventListener("focus", () => {
         this.open(element.value, (currentValue) => {
@@ -88,8 +92,9 @@ const keyboard = {
       "space",
     ];
 
+    // Creates HTML for an icon
     const createIconHTML = (icon_name) => {
-      return `<i class='material-icons'>${icon_name}</i>`;
+      return `<i class="material-icons">${icon_name}</i>`;
     };
 
     keyLayout.forEach((key) => {
@@ -97,6 +102,7 @@ const keyboard = {
       const insertLineBreak =
         ["backspace", "p", "enter", "?"].indexOf(key) !== -1;
 
+      // Add attributes/classes
       keyElement.setAttribute("type", "button");
       keyElement.classList.add("keyboard__key");
 
@@ -134,18 +140,7 @@ const keyboard = {
 
         case "enter":
           keyElement.classList.add("keyboard__key--wide");
-          keyElement.innerHTML = createIconHTML("keyboard-return");
-
-          keyElement.addEventListener("click", () => {
-            this.properties.value += "\n";
-            this._triggerEvent("oninput");
-          });
-
-          break;
-
-        case "enter":
-          keyElement.classList.add("keyboard__key--wide");
-          keyElement.innerHTML = createIconHTML("keyboard-return");
+          keyElement.innerHTML = createIconHTML("keyboard_return");
 
           keyElement.addEventListener("click", () => {
             this.properties.value += "\n";
@@ -191,12 +186,14 @@ const keyboard = {
 
           break;
       }
+
       fragment.appendChild(keyElement);
 
       if (insertLineBreak) {
         fragment.appendChild(document.createElement("br"));
       }
     });
+
     return fragment;
   },
 
@@ -212,7 +209,7 @@ const keyboard = {
     for (const key of this.elements.keys) {
       if (key.childElementCount === 0) {
         key.textContent = this.properties.capsLock
-          ? key.textContent.upperCase()
+          ? key.textContent.toUpperCase()
           : key.textContent.toLowerCase();
       }
     }
@@ -224,6 +221,7 @@ const keyboard = {
     this.eventHandlers.onclose = onclose;
     this.elements.main.classList.remove("keyboard--hidden");
   },
+
   close() {
     this.properties.value = "";
     this.eventHandlers.oninput = oninput;
@@ -233,5 +231,5 @@ const keyboard = {
 };
 
 window.addEventListener("DOMContentLoaded", function () {
-  keyboard.init();
+  Keyboard.init();
 });
